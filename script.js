@@ -15,6 +15,11 @@ async function fetchJSON(file) {
     }
 }
 
+// Get fallback value
+function fallback(value, defaultValue) {
+    return value !== undefined && value !== null ? value : defaultValue;
+}
+
 // Update greeting based on time
 function updateGreeting() {
     const hour = new Date().getHours();
@@ -31,7 +36,7 @@ function updateGreeting() {
 
 // Update date
 function updateDate() {
-    const options = { weekday: 'long', month: 'long', day: 'numeric' };
+    const options = { weekday: 'long', month: 'long', 'day': 'numeric' };
     const dateEl = document.getElementById('date');
     dateEl.textContent = new Date().toLocaleDateString('en-US', options);
 }
@@ -39,32 +44,40 @@ function updateDate() {
 // Load weather
 async function loadWeather() {
     const weather = await fetchJSON('weather.json');
-    if (!weather) return;
-
-    const weatherEl = document.getElementById('weather');
-    const icons = { sunny: '☀️', cloudy: '⛅', rainy: '🌧️', snowy: '❄️', stormy: '⛈️' };
     
+    // Fallback values
+    const temp = fallback(weather?.current?.temp, '--');
+    const unit = fallback(weather?.current?.unit, '°');
+    const description = fallback(weather?.current?.description, 'Loading...');
+    const iconMap = { sunny: '☀️', cloudy: '⛅', rainy: '🌧️', snowy: '❄️', stormy: '⛈️' };
+    const icon = iconMap[weather?.current?.icon] || '🌤️';
+    
+    const weatherEl = document.getElementById('weather');
     weatherEl.innerHTML = `
-        <span class="weather-icon">${icons[weather.icon] || '☀️'}</span>
-        <span class="weather-temp">${weather.temp}°${weather.unit || 'F'}</span>
-        <span class="weather-desc">${weather.description}</span>
+        <span class="weather-icon">${icon}</span>
+        <span class="weather-temp">${temp}${unit}</span>
+        <span class="weather-desc">${description}</span>
     `;
 }
 
 // Load tasks
 async function loadTasks() {
     const data = await fetchJSON('tasks.json');
-    if (!data) return;
+    const tasks = data?.tasks || [];
+    
+    document.getElementById('tasks-count').textContent = fallback(data?.tasks?.length, 0);
 
     const taskList = document.getElementById('task-list');
-    document.getElementById('tasks-count').textContent = data.tasks?.length || 0;
+    
+    if (tasks.length === 0) {
+        taskList.innerHTML = '<li class="task"><label>No tasks today</label></li>';
+        return;
+    }
 
-    if (!data.tasks) return;
-
-    taskList.innerHTML = data.tasks.map((task, index) => `
+    taskList.innerHTML = tasks.map((task, index) => `
         <li class="task">
             <input type="checkbox" id="task${index + 1}" ${task.completed ? 'checked' : ''}>
-            <label for="task${index + 1}">${task.title}</label>
+            <label for="task${index + 1}">${fallback(task.title, 'Untitled task')}</label>
         </li>
     `).join('');
 }
@@ -72,19 +85,23 @@ async function loadTasks() {
 // Load timeline/events
 async function loadTimeline() {
     const data = await fetchJSON('events.json');
-    if (!data) return;
+    const events = data?.events || [];
+    
+    document.getElementById('events-count').textContent = fallback(events.length, 0);
 
     const timeline = document.getElementById('timeline');
-    document.getElementById('events-count').textContent = data.events?.length || 0;
+    
+    if (events.length === 0) {
+        timeline.innerHTML = '<div class="timeline-item"><span class="time">--:--</span><div class="event"><span class="event-title">No events today</span></div></div>';
+        return;
+    }
 
-    if (!data.events) return;
-
-    timeline.innerHTML = data.events.map(event => `
+    timeline.innerHTML = events.map(event => `
         <div class="timeline-item">
-            <span class="time">${event.time}</span>
+            <span class="time">${fallback(event.time, '--:--')}</span>
             <div class="event">
-                <span class="event-title">${event.title}</span>
-                <span class="event-duration">${event.duration || ''}</span>
+                <span class="event-title">${fallback(event.title, 'Untitled event')}</span>
+                <span class="event-duration">${fallback(event.duration, '')}</span>
             </div>
         </div>
     `).join('');
@@ -93,17 +110,21 @@ async function loadTimeline() {
 // Load notes
 async function loadNotes() {
     const data = await fetchJSON('notes.json');
-    if (!data) return;
+    const notes = data?.notes || [];
+    
+    document.getElementById('notes-count').textContent = fallback(notes.length, 0);
 
     const notesGrid = document.getElementById('notes-grid');
-    document.getElementById('notes-count').textContent = data.notes?.length || 0;
+    
+    if (notes.length === 0) {
+        notesGrid.innerHTML = '<div class="note"><span class="note-tag">Notes</span><p>No notes</p></div>';
+        return;
+    }
 
-    if (!data.notes) return;
-
-    notesGrid.innerHTML = data.notes.map(note => `
+    notesGrid.innerHTML = notes.map(note => `
         <div class="note">
-            <span class="note-tag">${note.tag}</span>
-            <p>${note.content}</p>
+            <span class="note-tag">${fallback(note.tag, 'Note')}</span>
+            <p>${fallback(note.content, '')}</p>
         </div>
     `).join('');
 }
@@ -111,18 +132,21 @@ async function loadNotes() {
 // Load forecast
 async function loadForecast() {
     const data = await fetchJSON('forecast.json');
-    if (!data) return;
+    const forecast = data?.forecast || [];
+    
+    const forecastEl = document.getElementById('forecast');
+    const iconMap = { sunny: '☀️', cloudy: '⛅', rainy: '🌧️', snowy: '❄️', stormy: '⛈️' };
+    
+    if (forecast.length === 0) {
+        forecastEl.innerHTML = '<div class="forecast-day"><span class="day">--</span><span class="forecast-icon">🌤️</span><span class="forecast-temp">--°</span></div>';
+        return;
+    }
 
-    const forecast = document.getElementById('forecast');
-    const icons = { sunny: '☀️', cloudy: '⛅', rainy: '🌧️', snowy: '❄️', stormy: '⛈️' };
-
-    if (!data.forecast) return;
-
-    forecast.innerHTML = data.forecast.map(day => `
+    forecastEl.innerHTML = forecast.map(day => `
         <div class="forecast-day">
-            <span class="day">${day.day}</span>
-            <span class="forecast-icon">${icons[day.icon] || '☀️'}</span>
-            <span class="forecast-temp">${day.high}°</span>
+            <span class="day">${fallback(day.day, '--')}</span>
+            <span class="forecast-icon">${iconMap[day.icon] || '🌤️'}</span>
+            <span class="forecast-temp">${fallback(day.high, '--')}°</span>
         </div>
     `).join('');
 }
