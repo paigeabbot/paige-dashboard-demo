@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day at a Glance</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="greeting">
+                <h1 id="greeting">Good morning</h1>
+                <p id="date">Tuesday, February 18</p>
+            </div>
+            <div class="weather" id="weather">
+                <span class="weather-icon">☀️</span>
+                <span class="weather-temp">72°F</span>
+                <span class="weather-desc">Sunny</span>
+            </div>
+        </header>
+
+        <!-- Quick Stats -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-number" id="tasks-count">3</span>
+                <span class="stat-label">Tasks</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="events-count">2</span>
+                <span class="stat-label">Events</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="notes-count">5</span>
+                <span class="stat-label">Notes</span>
+            </div>
+        </section>
+
+        <!-- Main Grid -->
+        <main class="main-grid">
+            <!-- Tasks -->
+            <section class="card tasks-card">
+                <div class="card-header">
+                    <h2>Tasks</h2>
+                    <button class="add-btn">+</button>
+                </div>
+                <ul class="task-list" id="task-list">
+                    <li class="task">
+                        <input type="checkbox" id="task1">
+                        <label for="task1">Complete recommendation letters</label>
+                    </li>
+                    <li class="task">
+                        <input type="checkbox" id="task2">
+                        <label for="task2">Follow up with recruiter</label>
+                    </li>
+                    <li class="task">
+                        <input type="checkbox" id="task3">
+                        <label for="task3">Send birthday wishes</label>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Timeline -->
+            <section class="card timeline-card">
+                <div class="card-header">
+                    <h2>Today</h2>
+                </div>
+                <div class="timeline" id="timeline">
+                    <div class="timeline-item">
+                        <span class="time">9:00 AM</span>
+                        <div class="event">
+                            <span class="event-title">Morning routine</span>
+                            <span class="event-duration">1 hour</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="time">2:00 PM</span>
+                        <div class="event">
+                            <span class="event-title">Meeting</span>
+                            <span class="event-duration">1 hour</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="time">5:00 PM</span>
+                        <div class="event">
+                            <span class="event-title">Wrap up</span>
+                            <span class="event-duration">End of day</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Notes -->
+            <section class="card notes-card">
+                <div class="card-header">
+                    <h2>Quick Notes</h2>
+                    <button class="add-btn">+</button>
+                </div>
+                <div class="notes-grid" id="notes-grid">
+                    <div class="note">
+                        <span class="note-tag">Ideas</span>
+                        <p>Remember to water the plants</p>
+                    </div>
+                    <div class="note">
+                        <span class="note-tag">Shopping</span>
+                        <p>Milk, eggs, bread</p>
+                    </div>
+                    <div class="note">
+                        <span class="note-tag">Call</span>
+                        <p>Schedule dentist appointment</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weather Forecast -->
+            <section class="card weather-card">
+                <div class="card-header">
+                    <h2>Forecast</h2>
+                </div>
+                <div class="forecast" id="forecast">
+                    <div class="forecast-day">
+                        <span class="day">Wed</span>
+                        <span class="forecast-icon">⛅</span>
+                        <span class="forecast-temp">68°</span>
+                    </div>
+                    <div class="forecast-day">
+                        <span class="day">Thu</span>
+                        <span class="forecast-icon">🌧️</span>
+                        <span class="forecast-temp">62°</span>
+                    </div>
+                    <div class="forecast-day">
+                        <span class="day">Fri</span>
+                        <span class="forecast-icon">☀️</span>
+                        <span class="forecast-temp">74°</span>
+                    </div>
+                    <div class="forecast-day">
+                        <span class="day">Sat</span>
+                        <span class="forecast-icon">☀️</span>
+                        <span class="forecast-temp">78°</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Day at a Glance</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

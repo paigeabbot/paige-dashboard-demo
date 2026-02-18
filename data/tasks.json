@@ -1,0 +1,7 @@
+{
+    "tasks": [
+        { "title": "Complete recommendation letters", "completed": false },
+        { "title": "Follow up with recruiter", "completed": false },
+        { "title": "Send birthday wishes", "completed": false }
+    ]
+}

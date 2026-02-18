@@ -1,0 +1,7 @@
+{
+    "events": [
+        { "time": "9:00 AM", "title": "Morning routine", "duration": "1 hour" },
+        { "time": "2:00 PM", "title": "Meeting", "duration": "1 hour" },
+        { "time": "5:00 PM", "title": "Wrap up", "duration": "End of day" }
+    ]
+}
