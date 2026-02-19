@@ -1,59 +1,21 @@
-# Day at a Glance Dashboard
+# Day at a Glance - Password Protected Demo
 
-A clean, responsive dashboard prototype ready for data.
+🔐 **Password:** `demo123`
 
-## Setup
+This is a password-protected demo of the Day at a Glance dashboard.
 
-1. Enable GitHub Pages:
-   - Go to repo Settings → Pages
-   - Source: `main` → `/docs`
-   - Save
+## Access
 
-2. Access at: `https://paigeabbot.github.io/paige-pa-design/`
+1. Go to: https://paigeabbot.github.io/paige-dashboard-public/
+2. Enter password: `demo123`
+3. View the dashboard
 
-## Data Files (edit these to update the dashboard)
+## About
 
-All data lives in `/docs/data/`:
+This is a prototype to test the dashboard layout and functionality with Staticrypt password protection.
 
-| File | Purpose |
-|------|---------|
-| `weather.json` | Current weather |
-| `forecast.json` | 4-day forecast |
-| `tasks.json` | Todo list |
-| `events.json` | Today's timeline |
-| `notes.json` | Quick notes |
+## Repos
 
-## Editing Data
-
-Simply edit any JSON file and push. The dashboard updates automatically.
-
-### Example - Update weather:
-```json
-{
-    "current": {
-        "temp": 72,
-        "unit": "F",
-        "icon": "sunny",
-        "description": "Sunny and pleasant"
-    }
-}
-```
-
-### Available weather icons:
-- `sunny` → ☀️
-- `cloudy` → ⛅
-- ` rainy` → 🌧️
-- `snowy` → ❄️
-- `stormy` → ⛈️
-
-## Customization
-
-Edit these files to customize:
-- `styles.css` → Colors, spacing, fonts
-- `index.html` → Layout, sections
-- `script.js` → Data fetching logic
-
-## No Personal Info
-
-This is a prototype. All data is sample/placeholder.
-Replace with real data when ready.
+- **Demo (this):** Password-protected version
+- **Public:** https://github.com/paigeabbot/paige-dashboard-demo (no password)
+- **Secure:** https://github.com/paigeabbot/paige-dashboard-secure (your private version)
