@@ -1,21 +1,52 @@
-// Day at a Glance - Data fetcher
-// Fetches data from JSON files in /data/
+// Day at a Glance - Data embedded directly
 
-const DATA_PATH = 'data/';
-
-// Fetch helper
-async function fetchJSON(file) {
-    try {
-        const response = await fetch(`${DATA_PATH}${file}`);
-        if (!response.ok) return null;
-        return await response.json();
-    } catch (error) {
-        console.warn(`Could not load ${file}:`, error);
-        return null;
+// Embedded data (no fetch needed)
+const EMBEDDED_DATA = {
+    weather: {
+        current: {
+            temp: 72,
+            unit: "F",
+            icon: "sunny",
+            description: "Sunny and pleasant"
+        }
+    },
+    forecast: {
+        forecast: [
+            { day: "Wed", icon: "cloudy", high: 68 },
+            { day: "Thu", icon: "rainy", high: 62 },
+            { day: "Fri", icon: "sunny", high: 74 },
+            { day: "Sat", icon: "sunny", high: 78 }
+        ]
+    },
+    tasks: {
+        tasks: [
+            { title: "Complete recommendation letters", completed: false },
+            { title: "Follow up with recruiter", completed: false },
+            { title: "Send birthday wishes", completed: false }
+        ]
+    },
+    events: {
+        events: [
+            { time: "9:00 AM", title: "Morning routine", duration: "1 hour" },
+            { time: "2:00 PM", title: "Meeting", duration: "1 hour" },
+            { time: "5:00 PM", title: "Wrap up", duration: "End of day" }
+        ]
+    },
+    notes: {
+        notes: [
+            { tag: "Ideas", content: "Remember to water the plants" },
+            { tag: "Shopping", content: "Milk, eggs, bread" },
+            { tag: "Call", content: "Schedule dentist appointment" }
+        ]
     }
+};
+
+// No fetch needed - data is embedded
+function getData(type) {
+    return EMBEDDED_DATA[type];
 }
 
-// Get fallback value
+// Fallback helper
 function fallback(value, defaultValue) {
     return value !== undefined && value !== null ? value : defaultValue;
 }
@@ -36,134 +67,117 @@ function updateGreeting() {
 
 // Update date
 function updateDate() {
-    const options = { weekday: 'long', month: 'long', 'day': 'numeric' };
+    const options = { weekday: 'long', month: 'long', day: 'numeric' };
     const dateEl = document.getElementById('date');
     dateEl.textContent = new Date().toLocaleDateString('en-US', options);
 }
 
 // Load weather
-async function loadWeather() {
-    const weather = await fetchJSON('weather.json');
-    
-    // Fallback values
-    const temp = fallback(weather?.current?.temp, '--');
-    const unit = fallback(weather?.current?.unit, '°');
-    const description = fallback(weather?.current?.description, 'Loading...');
+function loadWeather() {
+    const weather = getData('weather');
+    const current = weather?.current || {};
     const iconMap = { sunny: '☀️', cloudy: '⛅', rainy: '🌧️', snowy: '❄️', stormy: '⛈️' };
-    const icon = iconMap[weather?.current?.icon] || '🌤️';
     
     const weatherEl = document.getElementById('weather');
     weatherEl.innerHTML = `
-        <span class="weather-icon">${icon}</span>
-        <span class="weather-temp">${temp}${unit}</span>
-        <span class="weather-desc">${description}</span>
+        <span class="weather-icon">${iconMap[current.icon] || '🌤️'}</span>
+        <span class="weather-temp">${fallback(current.temp, '--')}°${fallback(current.unit, '°')}</span>
+        <span class="weather-desc">${fallback(current.description, 'Loading...')}</span>
     `;
 }
 
 // Load tasks
-async function loadTasks() {
-    const data = await fetchJSON('tasks.json');
+function loadTasks() {
+    const data = getData('tasks');
     const tasks = data?.tasks || [];
     
-    document.getElementById('tasks-count').textContent = fallback(data?.tasks?.length, 0);
-
+    document.getElementById('tasks-count').textContent = fallback(tasks.length, 0);
     const taskList = document.getElementById('task-list');
     
     if (tasks.length === 0) {
         taskList.innerHTML = '<li class="task"><label>No tasks today</label></li>';
-        return;
+    } else {
+        taskList.innerHTML = tasks.map((task, index) => `
+            <li class="task">
+                <input type="checkbox" id="task${index + 1}" ${task.completed ? 'checked' : ''}>
+                <label for="task${index + 1}">${fallback(task.title, 'Untitled task')}</label>
+            </li>
+        `).join('');
     }
-
-    taskList.innerHTML = tasks.map((task, index) => `
-        <li class="task">
-            <input type="checkbox" id="task${index + 1}" ${task.completed ? 'checked' : ''}>
-            <label for="task${index + 1}">${fallback(task.title, 'Untitled task')}</label>
-        </li>
-    `).join('');
 }
 
 // Load timeline/events
-async function loadTimeline() {
-    const data = await fetchJSON('events.json');
+function loadTimeline() {
+    const data = getData('events');
     const events = data?.events || [];
     
     document.getElementById('events-count').textContent = fallback(events.length, 0);
-
     const timeline = document.getElementById('timeline');
     
     if (events.length === 0) {
         timeline.innerHTML = '<div class="timeline-item"><span class="time">--:--</span><div class="event"><span class="event-title">No events today</span></div></div>';
-        return;
-    }
-
-    timeline.innerHTML = events.map(event => `
-        <div class="timeline-item">
-            <span class="time">${fallback(event.time, '--:--')}</span>
-            <div class="event">
-                <span class="event-title">${fallback(event.title, 'Untitled event')}</span>
-                <span class="event-duration">${fallback(event.duration, '')}</span>
+    } else {
+        timeline.innerHTML = events.map(event => `
+            <div class="timeline-item">
+                <span class="time">${fallback(event.time, '--:--')}</span>
+                <div class="event">
+                    <span class="event-title">${fallback(event.title, 'Untitled event')}</span>
+                    <span class="event-duration">${fallback(event.duration, '')}</span>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `).join('');
+    }
 }
 
 // Load notes
-async function loadNotes() {
-    const data = await fetchJSON('notes.json');
+function loadNotes() {
+    const data = getData('notes');
     const notes = data?.notes || [];
     
     document.getElementById('notes-count').textContent = fallback(notes.length, 0);
-
     const notesGrid = document.getElementById('notes-grid');
     
     if (notes.length === 0) {
         notesGrid.innerHTML = '<div class="note"><span class="note-tag">Notes</span><p>No notes</p></div>';
-        return;
+    } else {
+        notesGrid.innerHTML = notes.map(note => `
+            <div class="note">
+                <span class="note-tag">${fallback(note.tag, 'Note')}</span>
+                <p>${fallback(note.content, '')}</p>
+            </div>
+        `).join('');
     }
-
-    notesGrid.innerHTML = notes.map(note => `
-        <div class="note">
-            <span class="note-tag">${fallback(note.tag, 'Note')}</span>
-            <p>${fallback(note.content, '')}</p>
-        </div>
-    `).join('');
 }
 
 // Load forecast
-async function loadForecast() {
-    const data = await fetchJSON('forecast.json');
+function loadForecast() {
+    const data = getData('forecast');
     const forecast = data?.forecast || [];
-    
     const forecastEl = document.getElementById('forecast');
     const iconMap = { sunny: '☀️', cloudy: '⛅', rainy: '🌧️', snowy: '❄️', stormy: '⛈️' };
     
     if (forecast.length === 0) {
         forecastEl.innerHTML = '<div class="forecast-day"><span class="day">--</span><span class="forecast-icon">🌤️</span><span class="forecast-temp">--°</span></div>';
-        return;
+    } else {
+        forecastEl.innerHTML = forecast.map(day => `
+            <div class="forecast-day">
+                <span class="day">${fallback(day.day, '--')}</span>
+                <span class="forecast-icon">${iconMap[day.icon] || '🌤️'}</span>
+                <span class="forecast-temp">${fallback(day.high, '--')}°</span>
+            </div>
+        `).join('');
     }
-
-    forecastEl.innerHTML = forecast.map(day => `
-        <div class="forecast-day">
-            <span class="day">${fallback(day.day, '--')}</span>
-            <span class="forecast-icon">${iconMap[day.icon] || '🌤️'}</span>
-            <span class="forecast-temp">${fallback(day.high, '--')}°</span>
-        </div>
-    `).join('');
 }
 
 // Initialize
-async function init() {
+function init() {
     updateGreeting();
     updateDate();
-    
-    // Load all data in parallel
-    await Promise.all([
-        loadWeather(),
-        loadTasks(),
-        loadTimeline(),
-        loadNotes(),
-        loadForecast()
-    ]);
+    loadWeather();
+    loadTasks();
+    loadTimeline();
+    loadNotes();
+    loadForecast();
 }
 
 // Run on load
