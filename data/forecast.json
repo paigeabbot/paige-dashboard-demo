@@ -1,8 +1,0 @@
-{
-    "forecast": [
-        { "day": "Wed", "icon": "cloudy", "high": 68 },
-        { "day": "Thu", "icon": "rainy", "high": 62 },
-        { "day": "Fri", "icon": "sunny", "high": 74 },
-        { "day": "Sat", "icon": "sunny", "high": 78 }
-    ]
-}
